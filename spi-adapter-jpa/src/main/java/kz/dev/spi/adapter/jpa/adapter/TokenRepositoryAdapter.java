@@ -6,7 +6,7 @@ import kz.dev.core.model.TokenType;
 import kz.dev.spi.adapter.jpa.entity.TokenJpaEntity;
 import kz.dev.spi.adapter.jpa.mapper.TokenPersistenceMapper;
 import kz.dev.spi.adapter.jpa.repository.TokenJpaRepository;
-import kz.dev.spi.auth.TokenRepository;
+import kz.dev.spi.persistence.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +19,6 @@ public class TokenRepositoryAdapter implements TokenRepository {
 
     private final TokenJpaRepository jpaRepository;
     private final TokenPersistenceMapper mapper;
-
 
     @Override
     public Token save(Token token) {

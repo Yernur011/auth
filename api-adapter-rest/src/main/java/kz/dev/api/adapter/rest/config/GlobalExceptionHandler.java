@@ -1,6 +1,7 @@
 package kz.dev.api.adapter.rest.config;
 
 import kz.dev.core.exception.InvalidCredentialsException;
+import kz.dev.core.exception.InvalidOtpException;
 import kz.dev.core.exception.InvalidTokenException;
 import kz.dev.core.exception.UserAlreadyExistsException;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidCredentialsException.class)
     public ProblemDetail handleInvalidCredentials(InvalidCredentialsException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidOtpException.class)
+    public ProblemDetail handleInvalidOtp(InvalidOtpException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
     }
 
     @ExceptionHandler(InvalidTokenException.class)

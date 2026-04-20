@@ -6,6 +6,7 @@ import kz.dev.api.auth.RegisterUserApi;
 import kz.dev.api.auth.RevokeTokenApi;
 import kz.dev.spi.auth.ValidateTokenSpi;
 import kz.dev.core.exception.InvalidCredentialsException;
+import kz.dev.core.exception.InvalidOtpException;
 import kz.dev.core.exception.InvalidTokenException;
 import kz.dev.core.exception.UserAlreadyExistsException;
 import kz.dev.core.model.Token;
@@ -16,35 +17,28 @@ import kz.dev.core.model.command.AuthenticateCommand;
 import kz.dev.core.model.command.RegisterCommand;
 import kz.dev.spi.auth.PasswordEncoder;
 import kz.dev.spi.auth.TokenGenerator;
-import kz.dev.spi.auth.TokenRepository;
+import kz.dev.spi.otp.OtpPort;
+import kz.dev.spi.persistence.TokenRepository;
 import kz.dev.spi.persistence.UserRepository;
+import kz.dev.spi.security.SecurityContextPort;
+import lombok.RequiredArgsConstructor;
 
-import java.util.UUID;
-
-public class AuthDomainService implements
-        RegisterUserApi,
-        AuthenticateUserApi,
-        RefreshTokenApi,
-        ValidateTokenSpi,
-        RevokeTokenApi {
+@RequiredArgsConstructor
+public class AuthDomainService implements RegisterUserApi, AuthenticateUserApi,
+        RefreshTokenApi, ValidateTokenSpi, RevokeTokenApi {
 
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenGenerator tokenGenerator;
-
-    public AuthDomainService(UserRepository userRepository,
-                             TokenRepository tokenRepository,
-                             PasswordEncoder passwordEncoder,
-                             TokenGenerator tokenGenerator) {
-        this.userRepository = userRepository;
-        this.tokenRepository = tokenRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.tokenGenerator = tokenGenerator;
-    }
+    private final SecurityContextPort securityContextPort;
+    private final OtpPort otpPort;
 
     @Override
     public User register(RegisterCommand command) {
+        if (!otpPort.verify(command.email(), command.otpCode())) {
+            throw new InvalidOtpException("Invalid or expired OTP");
+        }
         if (userRepository.existsByEmail(command.email())) {
             throw new UserAlreadyExistsException("Email already in use: " + command.email());
         }
@@ -82,7 +76,6 @@ public class AuthDomainService implements
         User user = userRepository.findById(refreshToken.getUserId())
                 .orElseThrow(() -> new InvalidTokenException("Token owner not found"));
 
-        // rotate: revoke old refresh token, issue new pair
         refreshToken.revoke();
         tokenRepository.save(refreshToken);
 
@@ -104,7 +97,8 @@ public class AuthDomainService implements
     }
 
     @Override
-    public void revoke(String tokenValue) {
+    public void revoke() {
+        String tokenValue = securityContextPort.getCurrentToken();
         Token token = tokenRepository.findByValue(tokenValue)
                 .orElseThrow(() -> new InvalidTokenException("Token not found"));
         token.revoke();
@@ -112,8 +106,8 @@ public class AuthDomainService implements
     }
 
     @Override
-    public void revokeAll(UUID userId) {
-        tokenRepository.revokeAllByUserId(userId);
+    public void revokeAll() {
+        tokenRepository.revokeAllByUserId(securityContextPort.getCurrentUserId());
     }
 
     private TokenPair issuePair(User user) {

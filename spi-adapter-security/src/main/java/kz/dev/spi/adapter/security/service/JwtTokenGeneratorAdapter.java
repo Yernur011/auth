@@ -1,4 +1,4 @@
-package kz.dev.spi.adapter.security;
+package kz.dev.spi.adapter.security.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -6,8 +6,8 @@ import kz.dev.core.model.Token;
 import kz.dev.core.model.TokenPair;
 import kz.dev.core.model.TokenType;
 import kz.dev.core.model.User;
+import kz.dev.spi.adapter.security.configuration.JwtProperties;
 import kz.dev.spi.auth.TokenGenerator;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -15,8 +15,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.stream.Collectors;
-
-@Component
 
 public class JwtTokenGeneratorAdapter implements TokenGenerator {
 

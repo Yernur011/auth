@@ -4,43 +4,41 @@ import kz.dev.api.adapter.rest.client.AuthClient;
 import kz.dev.api.adapter.rest.dto.LoginRequest;
 import kz.dev.api.adapter.rest.dto.RefreshRequest;
 import kz.dev.api.adapter.rest.dto.RegisterRequest;
+import kz.dev.api.adapter.rest.dto.SendOtpRequest;
 import kz.dev.api.adapter.rest.dto.TokenPairResponse;
 import kz.dev.api.adapter.rest.dto.UserResponse;
 import kz.dev.api.auth.AuthenticateUserApi;
 import kz.dev.api.auth.RefreshTokenApi;
 import kz.dev.api.auth.RegisterUserApi;
+import kz.dev.api.auth.RequestOtpApi;
 import kz.dev.api.auth.RevokeTokenApi;
 import kz.dev.core.model.command.AuthenticateCommand;
 import kz.dev.core.model.command.RegisterCommand;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 @RestController
+@RequiredArgsConstructor
 public class AuthController implements AuthClient {
 
+    private final RequestOtpApi requestOtpApi;
     private final RegisterUserApi registerUserApi;
     private final AuthenticateUserApi authenticateUserApi;
     private final RefreshTokenApi refreshTokenApi;
     private final RevokeTokenApi revokeTokenApi;
 
-    public AuthController(RegisterUserApi registerUserApi,
-                          AuthenticateUserApi authenticateUserApi,
-                          RefreshTokenApi refreshTokenApi,
-                          RevokeTokenApi revokeTokenApi) {
-        this.registerUserApi = registerUserApi;
-        this.authenticateUserApi = authenticateUserApi;
-        this.refreshTokenApi = refreshTokenApi;
-        this.revokeTokenApi = revokeTokenApi;
+    @Override
+    public ResponseEntity<Void> sendOtp(SendOtpRequest request) {
+        requestOtpApi.requestOtp(request.email());
+        return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<UserResponse> register(RegisterRequest request) {
-        var user = registerUserApi.register(new RegisterCommand(request.username(), request.email(), request.password()));
-        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.from(user));
+        var command = new RegisterCommand(request.username(), request.email(), request.password(), request.otpCode());
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.from(registerUserApi.register(command)));
     }
 
     @Override
@@ -51,14 +49,12 @@ public class AuthController implements AuthClient {
 
     @Override
     public ResponseEntity<TokenPairResponse> refresh(RefreshRequest request) {
-        var pair = refreshTokenApi.refresh(request.refreshToken());
-        return ResponseEntity.ok(TokenPairResponse.from(pair));
+        return ResponseEntity.ok(TokenPairResponse.from(refreshTokenApi.refresh(request.refreshToken())));
     }
 
     @Override
     public ResponseEntity<Void> logout() {
-        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        revokeTokenApi.revokeAll(userId);
+        revokeTokenApi.revokeAll();
         return ResponseEntity.noContent().build();
     }
 }

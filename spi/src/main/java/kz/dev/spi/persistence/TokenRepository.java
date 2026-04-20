@@ -1,4 +1,4 @@
-package kz.dev.spi.auth;
+package kz.dev.spi.persistence;
 
 import kz.dev.core.model.Token;
 import kz.dev.core.model.TokenType;

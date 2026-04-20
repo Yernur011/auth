@@ -1,13 +1,15 @@
 package kz.dev.core.model;
 
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
 
+@Getter
 public class User {
-
     private final UUID id;
     private String username;
     private String email;
@@ -60,11 +62,5 @@ public class User {
         return roles.contains(role);
     }
 
-    public UUID getId() { return id; }
-    public String getUsername() { return username; }
-    public String getEmail() { return email; }
-    public String getPasswordHash() { return passwordHash; }
     public Set<Role> getRoles() { return Collections.unmodifiableSet(roles); }
-    public boolean isActive() { return active; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
 }

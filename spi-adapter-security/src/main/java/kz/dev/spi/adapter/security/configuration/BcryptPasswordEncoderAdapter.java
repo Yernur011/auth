@@ -1,4 +1,4 @@
-package kz.dev.spi.adapter.security;
+package kz.dev.spi.adapter.security.configuration;
 
 import kz.dev.spi.auth.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

@@ -1,4 +1,4 @@
-package kz.dev.spi.adapter.security;
+package kz.dev.spi.adapter.security.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
