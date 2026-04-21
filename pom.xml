@@ -21,6 +21,7 @@
 		<spring.version>7.0.7</spring.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<lombol.version>1.18.44</lombol.version>
+		<kafka.client.version>4.1.0-M1</kafka.client.version>
 	</properties>
 
 	<modules>
@@ -33,6 +34,8 @@
 		<module>spi-adapter-jpa</module>
 		<module>spi-adapter-security</module>
 		<module>use-case</module>
+		<module>spi-adapter-kafka</module>
+		<module>spi-adapter-redis</module>
 	</modules>
 
 	<dependencyManagement>
@@ -56,6 +59,13 @@
 				<groupId>org.mapstruct</groupId>
 				<artifactId>mapstruct</artifactId>
 				<version>${mapstruct.version}</version>
+			</dependency>
+			<!-- Source: https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka -->
+			<dependency>
+				<groupId>org.springframework.kafka</groupId>
+				<artifactId>spring-kafka</artifactId>
+				<version>${kafka.client.version}</version>
+				<scope>compile</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -63,4 +63,8 @@ public class User {
     }
 
     public Set<Role> getRoles() { return Collections.unmodifiableSet(roles); }
+
+    public boolean isActive() { return active; }
+
+    public String getPasswordHash() { return passwordHash; }
 }
