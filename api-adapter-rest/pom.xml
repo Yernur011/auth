@@ -34,23 +34,16 @@
             <version>3.0.2</version>
         </dependency>
 
-        <dependency>
-            <groupId>kz.dev</groupId>
-            <artifactId>shared</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
 
         <dependency>
             <groupId>kz.dev</groupId>
             <artifactId>core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>kz.dev</groupId>
-            <artifactId>use-case</artifactId>
+            <artifactId>api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
     </dependencies>
 </project>
