@@ -13,4 +13,18 @@
     <name>spi-adapter-redis</name>
     <description>spi-adapter-redis</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>4.0.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>kz.dev</groupId>
+            <artifactId>spi</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 </project>

@@ -1,6 +1,5 @@
 package kz.dev.spi.otp;
 
-public interface OtpPort {
-    void send(String email);
+public interface OtpVerifier {
     boolean verify(String email, String code);
 }

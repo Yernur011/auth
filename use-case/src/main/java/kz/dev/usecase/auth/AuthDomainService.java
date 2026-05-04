@@ -4,6 +4,7 @@ import kz.dev.api.auth.AuthenticateUserApi;
 import kz.dev.api.auth.RefreshTokenApi;
 import kz.dev.api.auth.RegisterUserApi;
 import kz.dev.api.auth.RevokeTokenApi;
+import kz.dev.spi.adapter.redis.RedisOtpAdapter;
 import kz.dev.spi.auth.ValidateTokenSpi;
 import kz.dev.core.exception.InvalidCredentialsException;
 import kz.dev.core.exception.InvalidOtpException;
@@ -17,11 +18,11 @@ import kz.dev.core.model.command.AuthenticateCommand;
 import kz.dev.core.model.command.RegisterCommand;
 import kz.dev.spi.auth.PasswordEncoder;
 import kz.dev.spi.auth.TokenGenerator;
-import kz.dev.spi.otp.OtpPort;
 import kz.dev.spi.persistence.TokenRepository;
 import kz.dev.spi.persistence.UserRepository;
 import kz.dev.spi.security.SecurityContextPort;
 import lombok.RequiredArgsConstructor;
+//import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 public class AuthDomainService implements RegisterUserApi, AuthenticateUserApi,
@@ -32,11 +33,12 @@ public class AuthDomainService implements RegisterUserApi, AuthenticateUserApi,
     private final PasswordEncoder passwordEncoder;
     private final TokenGenerator tokenGenerator;
     private final SecurityContextPort securityContextPort;
-    private final OtpPort otpPort;
+    private final RedisOtpAdapter redisOtpAdapter;
 
     @Override
+//    @Transactional
     public User register(RegisterCommand command) {
-        if (!otpPort.verify(command.email(), command.otpCode())) {
+        if (!redisOtpAdapter.verify(command.email(), command.otpCode())) {
             throw new InvalidOtpException("Invalid or expired OTP");
         }
         if (userRepository.existsByEmail(command.email())) {
