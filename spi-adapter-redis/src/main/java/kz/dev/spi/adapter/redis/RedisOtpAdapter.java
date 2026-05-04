@@ -20,13 +20,21 @@ public class RedisOtpAdapter implements OtpVerifier, OtpStore {
     }
 
     @Override
+    public void deleteByEmail(String email) {
+        String key = KEY_PREFIX + email;
+        redisTemplate.delete(key);
+    }
+
+    @Override
+    public void deleteByKey(String key) {
+        redisTemplate.delete(key);
+    }
+
+    @Override
     public boolean verify(String email, String code) {
         String key = KEY_PREFIX + email;
         String stored = redisTemplate.opsForValue().get(key);
-        if (stored != null && stored.equals(code)) {
-            redisTemplate.delete(key);
-            return true;
-        }
-        return false;
+
+        return stored != null && stored.equals(code);
     }
 }

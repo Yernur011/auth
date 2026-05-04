@@ -49,7 +49,10 @@ public class AuthDomainService implements RegisterUserApi, AuthenticateUserApi,
         }
         String hash = passwordEncoder.encode(command.rawPassword());
         User user = User.create(command.username(), command.email(), hash);
-        return userRepository.save(user);
+        User save = userRepository.save(user);
+
+        redisOtpAdapter.deleteByEmail(save.getEmail());
+        return save;
     }
 
     @Override
