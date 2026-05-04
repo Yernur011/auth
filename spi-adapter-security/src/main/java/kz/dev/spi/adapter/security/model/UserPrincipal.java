@@ -1,7 +1,6 @@
 package kz.dev.spi.adapter.security.model;
 
 import kz.dev.core.model.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,17 +8,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.UUID;
 
-@RequiredArgsConstructor
-public class UserPrincipal implements UserDetails {
-
-    private final User user;
+public record UserPrincipal(User user) implements UserDetails {
 
     public UUID getId() {
         return user.getId();
-    }
-
-    public User getUser() {
-        return user;
     }
 
     @Override

@@ -4,9 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>kz.dev</groupId>
-        <artifactId>security</artifactId>
+        <artifactId>starter</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>spi-adapter-security</artifactId>
@@ -15,6 +14,7 @@
     <description>spi-adapter-security</description>
 
     <dependencies>
+        <!--        modules-->
         <dependency>
             <groupId>kz.dev</groupId>
             <artifactId>spi</artifactId>
@@ -27,6 +27,7 @@
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <!--        spring-->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
@@ -43,6 +44,7 @@
             <version>7.1.0-M3</version>
             <scope>compile</scope>
         </dependency>
+        <!--        jwt-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -59,10 +61,6 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>0.12.6</version>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
         </dependency>
     </dependencies>
 

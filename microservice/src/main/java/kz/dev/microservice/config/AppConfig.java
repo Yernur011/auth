@@ -16,10 +16,8 @@ import kz.dev.spi.security.SecurityContextPort;
 import kz.dev.usecase.auth.AuthDomainService;
 import kz.dev.usecase.auth.OtpDomainService;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.common.internals.Topic;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +29,6 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 @Configuration
 @EntityScan("kz.dev")
 @EnableJpaRepositories("kz.dev")
-@EnableConfigurationProperties(JwtProperties.class)
 public class AppConfig {
 
     @Bean
@@ -51,7 +48,12 @@ public class AppConfig {
             @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
         return new JwtAuthenticationFilter(validateTokenSpi, exceptionResolver);
     }
-
+    @Bean
+    public JwtProperties jwtProperties(@Value(value = "${app.jwt.secret}") String secret,
+                                       @Value(value = "${app.jwt.access-ttl-seconds}") long accessTtlSeconds,
+                                       @Value(value = "${app.jwt.refresh-ttl-seconds}") long refreshTtlSeconds) {
+        return new JwtProperties(secret, accessTtlSeconds, refreshTtlSeconds);
+    }
     @Bean
     public JwtTokenGeneratorAdapter jwtTokenGeneratorAdapter(JwtProperties jwtProperties) {
         return new JwtTokenGeneratorAdapter(jwtProperties);
