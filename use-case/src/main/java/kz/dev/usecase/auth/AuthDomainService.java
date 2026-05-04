@@ -22,7 +22,7 @@ import kz.dev.spi.persistence.TokenRepository;
 import kz.dev.spi.persistence.UserRepository;
 import kz.dev.spi.security.SecurityContextPort;
 import lombok.RequiredArgsConstructor;
-//import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 public class AuthDomainService implements RegisterUserApi, AuthenticateUserApi,
@@ -36,7 +36,7 @@ public class AuthDomainService implements RegisterUserApi, AuthenticateUserApi,
     private final RedisOtpAdapter redisOtpAdapter;
 
     @Override
-//    @Transactional
+    @Transactional
     public User register(RegisterCommand command) {
         if (!redisOtpAdapter.verify(command.email(), command.otpCode())) {
             throw new InvalidOtpException("Invalid or expired OTP");
