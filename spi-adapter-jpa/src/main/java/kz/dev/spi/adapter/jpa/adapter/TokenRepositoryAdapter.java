@@ -8,12 +8,10 @@ import kz.dev.spi.adapter.jpa.mapper.TokenPersistenceMapper;
 import kz.dev.spi.adapter.jpa.repository.TokenJpaRepository;
 import kz.dev.spi.persistence.TokenRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
 @RequiredArgsConstructor
 public class TokenRepositoryAdapter implements TokenRepository {
 

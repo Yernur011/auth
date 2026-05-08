@@ -5,7 +5,6 @@ import kz.dev.api.auth.RefreshTokenApi;
 import kz.dev.api.auth.RegisterUserApi;
 import kz.dev.api.auth.RevokeTokenApi;
 import kz.dev.spi.adapter.redis.RedisOtpAdapter;
-import kz.dev.spi.auth.ValidateTokenSpi;
 import kz.dev.core.exception.InvalidCredentialsException;
 import kz.dev.core.exception.InvalidOtpException;
 import kz.dev.core.exception.InvalidTokenException;
@@ -26,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 public class AuthDomainService implements RegisterUserApi, AuthenticateUserApi,
-        RefreshTokenApi, ValidateTokenSpi, RevokeTokenApi {
+        RefreshTokenApi, RevokeTokenApi {
 
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
@@ -88,26 +87,12 @@ public class AuthDomainService implements RegisterUserApi, AuthenticateUserApi,
     }
 
     @Override
-    public User validate(String tokenValue) {
-        Token token = tokenRepository
-                .findByValueAndType(tokenValue, TokenType.ACCESS)
-                .orElseThrow(() -> new InvalidTokenException("Access token not found"));
-
-        if (!token.isValid()) {
-            throw new InvalidTokenException("Access token is expired or revoked");
-        }
-
-        return userRepository.findById(token.getUserId())
-                .orElseThrow(() -> new InvalidTokenException("Token owner not found"));
-    }
-
-    @Override
     public void revoke() {
         String tokenValue = securityContextPort.getCurrentToken();
-        Token token = tokenRepository.findByValue(tokenValue)
-                .orElseThrow(() -> new InvalidTokenException("Token not found"));
-        token.revoke();
-        tokenRepository.save(token);
+        tokenRepository.findByValue(tokenValue).ifPresent(token -> {
+            token.revoke();
+            tokenRepository.save(token);
+        });
     }
 
     @Override
